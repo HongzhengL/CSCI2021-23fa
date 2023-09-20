@@ -33,23 +33,49 @@ A
   `nums1.txt' and `nums2.txt'.  Paste the output the program produces
   below.
 
+  running num1.txt:
+    Reading double values from file 'nums1.txt'
+    [0] :     1.00 == 1.0000e+00
+    [1] :     2.00 == 2.0000e+00
+    [2] :     3.00 == 3.0000e+00
+    [3] :     4.00 == 4.0000e+00
+    [4] :     5.00 == 5.0000e+00
+    [5] :     6.00 == 6.0000e+00
+    [6] :     7.00 == 7.0000e+00
+    [7] :     8.00 == 8.0000e+00
+    [8] :     9.00 == 9.0000e+00
+    [9] :    10.00 == 1.0000e+01
+  running num2.txt:
+    Reading double values from file 'nums2.txt'
+    [0] :     4.35 == 4.3523e+00
+    [1] : 37066.25 == 3.7066e+04
+    [2] :   307.07 == 3.0707e+02
+    [3] :     0.05 == 5.1072e-02
+    [4] :   613.85 == 6.1385e+02
+    [5] :  9443.33 == 9.4433e+03
+    [6] : 84099.99 == 8.4100e+04
+    [7] : 28202.73 == 2.8203e+04
+
 B
 ~
   Examine the function `read_all_doubles()' in `twopass.c' and describe
   which lines/blocks of code carry out the following actions. Use the
   provided comments in the file as a guide.
 
-  - Opens the file for reading and checks for errors
-  - Counts all the doubles in the file
-  - Allocates memory for doubles in the file
-  - Moves the file read position to the beginning of the file
-  - Closes the file when reading is complete
+  - Opens the file for reading and checks for errors : 11 ~ 14
+  - Counts all the doubles in the file  : 16 ~ 24
+  - Allocates memory for doubles in the file  : 26
+  - Moves the file read position to the beginning of the file : 28
+  - Closes the file when reading is complete : 33
 
 C
 ~
   In your answer to the previous problem, you should have identified a
   use of `malloc()' in `read_all_doubles()'.  Where is this memory
   `free()''d and why?
+
+  It's `free()'d at the main() function because if it makes no sense to free
+  the memory in the `read_all_doubles()' function.
 
 D
 ~
@@ -79,6 +105,18 @@ B
   Compile the `read_items.c' program and run it on the provided binary
   file `items.bin'. Paste the output below. How does this output relate
   to what you saw when you opened the file with an editor?
+
+  output:
+    82 of Item 'Hydra'
+    7 of Item 'Arrow'
+    2 of Item 'Swan'
+    1 of Item 'Flame'
+    3 of Item 'Pearl'
+    14 of Item 'Orchid'
+    9 of Item 'Staff'
+    4 of Item 'Looking Glass'
+    12 of Item 'Tempest'
+    1 of Item 'Lamp Post'
 
 C
 ~
