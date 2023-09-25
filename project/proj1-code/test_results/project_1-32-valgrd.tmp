@@ -1,0 +1,15 @@
+==184061== Memcheck, a memory error detector
+==184061== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==184061== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==184061== Command: ./spell_check non_existent_file.txt another_non_existent_file.txt
+==184061== Parent PID: 183897
+==184061== 
+==184061== 
+==184061== HEAP SUMMARY:
+==184061==     in use at exit: 0 bytes in 0 blocks
+==184061==   total heap usage: 2 allocs, 2 frees, 1,496 bytes allocated
+==184061== 
+==184061== All heap blocks were freed -- no leaks are possible
+==184061== 
+==184061== For lists of detected and suppressed errors, rerun with: -s
+==184061== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

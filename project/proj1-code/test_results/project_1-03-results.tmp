@@ -1,0 +1,8 @@
+==============================================================================================================================
+== Test 3: Print Empty Dictionary
+== Starts the program (with an empty dictionary) and prints out the dictionary
+== contents, which should be empty.,
+Running test...
+Expected output is in file 'test_results/raw/project_1-03-expected.tmp'
+Actual output is in file 'test_results/raw/project_1-03-actual.tmp'
+Test PASSED

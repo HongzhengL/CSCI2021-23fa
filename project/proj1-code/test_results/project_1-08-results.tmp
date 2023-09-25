@@ -1,0 +1,8 @@
+==============================================================================================================================
+== Test 8: Add and Look Up Multiple Words
+== Add several words to the dictionary, then look up each of them to verify they
+== are present.
+Running test...
+Expected output is in file 'test_results/raw/project_1-08-expected.tmp'
+Actual output is in file 'test_results/raw/project_1-08-actual.tmp'
+Test PASSED

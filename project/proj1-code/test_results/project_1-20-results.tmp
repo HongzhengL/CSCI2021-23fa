@@ -1,0 +1,8 @@
+==============================================================================================================================
+== Test 20: Multi-Word Spell Check 2
+== Sets up a small dictionary, then runs spell check command on a file
+== containing several words, all of which are not present in dictionary.
+Running test...
+Expected output is in file 'test_results/raw/project_1-20-expected.tmp'
+Actual output is in file 'test_results/raw/project_1-20-actual.tmp'
+Test PASSED

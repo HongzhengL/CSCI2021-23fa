@@ -1,0 +1,7 @@
+==============================================================================================================================
+== Test 1: Start, Quit
+== Starts the program then issues the exit command which should end the program
+Running test...
+Expected output is in file 'test_results/raw/project_1-01-expected.tmp'
+Actual output is in file 'test_results/raw/project_1-01-actual.tmp'
+Test PASSED

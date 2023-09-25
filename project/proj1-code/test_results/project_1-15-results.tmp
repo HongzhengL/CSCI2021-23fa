@@ -1,0 +1,8 @@
+==============================================================================================================================
+== Test 15: Read Multiple Dictionary Files
+== Read in one dictionary file, perform a few basic operations, then read in a
+== second dictionary file and perform more operations.
+Running test...
+Expected output is in file 'test_results/raw/project_1-15-expected.tmp'
+Actual output is in file 'test_results/raw/project_1-15-actual.tmp'
+Test PASSED

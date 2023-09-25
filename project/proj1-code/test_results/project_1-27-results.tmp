@@ -1,0 +1,8 @@
+==============================================================================================================================
+== Test 27: Unknown Command
+== Attempt to run an incorrectly typed command and check that proper error
+== mess1age is printed out.
+Running test...
+Expected output is in file 'test_results/raw/project_1-27-expected.tmp'
+Actual output is in file 'test_results/raw/project_1-27-actual.tmp'
+Test PASSED
