@@ -56,7 +56,7 @@ Shift + Or
     0.
   - ( ) Changes `x' so that only its 19th bit is a 0, all other bits are
     unchanged.
-  - ( ) Changes `x' so that its 19th bit is set to 1, all other bits
+  - (X) Changes `x' so that its 19th bit is set to 1, all other bits
     unchanged.
   - ( ) Changes `x' so that its bits are shifted left by 19 places.
 
@@ -70,7 +70,7 @@ Shift + Or + Pattern
   | x = x | (0b110101 << 8);
   `----
 
-  - ( ) Sets the bits of `x' to the given pattern `0b110101' starting
+  - (X) Sets the bits of `x' to the given pattern `0b110101' starting
     with the 8th position.
   - ( ) Checks that `x' has the given pattern `0b110101' starting with
     the 8th position.
@@ -88,7 +88,7 @@ Shift + Invert + And
 
   - ( ) Changes `x' so that only its 8th bit is a 1, all other bits are
     0.
-  - ( ) Changes `x' so that only its 8th bit is a 0, all other bits are
+  - (X) Changes `x' so that only its 8th bit is a 0, all other bits are
     unchanged.
   - ( ) Changes `x' so that its 8th bit is set to 1, all other bits
     unchanged.
@@ -111,7 +111,7 @@ Shift + And
     `x' unchanged.
   - ( ) Conditionally execute only if the 13th bit of `x' is 1 and set
     that bit subsequently.
-  - ( ) Conditionally execute only if the 13th bit of `x' is 1 but leave
+  - (X) Conditionally execute only if the 13th bit of `x' is 1 but leave
     `x' unchanged.
 
 

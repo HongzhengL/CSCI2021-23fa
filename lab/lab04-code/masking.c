@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 
     printf("set 3rd bit as well\n");
     // TODO: set the indicated bit in x
-    ???
+    x = x | (1 << 3);
     print_intbits(x);
 
     printf("invert the bits\n");
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 
     printf("clear the 25th bit\n");
     // TODO: clear given bit in x
-    ???
+    x = x & ~(1 << 25);
     print_intbits(x);
 
     printf("clear all bits via xor\n");
@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 
     printf("place the pattern 10011111 starting at bit 20\n");
     // TODO: Place given pattern as indicated
-    ???
+    x = x | (0b10011111 << 20);
     print_intbits(x);
 
     int y;
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
 
     printf("set y to be x shifted right by 24 bits\n");
     // TODO: assign y based on shift
-    ???
+    y = x >> 24;
     print_intbits(y);
 
     printf("conditionally print 'x 13th bit SET' or 'x 13th bit CLEAR'\n");
@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
 
     printf("conditionally print 'y 4th bit SET' or 'y 4th bit CLEAR'\n");
     // TODO: check given bit
-    if (???) {
+    if (y & (1 >> 4)) {
         printf("y 4th bit SET\n");
     } else {
         printf("y 4th bit CLEAR\n");

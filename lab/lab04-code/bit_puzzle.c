@@ -7,6 +7,7 @@
  * Return 1 if the input number is even and 0 otherwise
  */
 int is_even(int n) {
+    if (!(n & 1)) return 1;
     return 0;
 }
 
