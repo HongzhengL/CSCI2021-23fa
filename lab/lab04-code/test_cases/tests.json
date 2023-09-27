@@ -1,0 +1,28 @@
+{
+    "name": "Lab 04",
+    "tests": [
+        {
+            "name": "Quiz: QUESTIONS.txt",
+            "description": "Determines if the answers in QUESTIONS.txt are correct",
+            "command": "test_cases/resources/socrates QUESTIONS.txt -c test_cases/resources/quiz_sum.json -a",
+            "output_file": "test_cases/output/quiz.txt",
+            "points": 0.5
+        },
+        {
+            "name": "Masking Program",
+            "description": "Checks output of masking program for correctness",
+            "command": "./masking",
+            "output_file": "test_cases/output/masking.txt",
+            "use_valgrind": "y",
+            "points": 0.25
+        },
+        {
+            "name": "Bitwise Puzzle",
+            "description": "Checks output of the bit puzzle program for correctness",
+            "command": "./bit_puzzle",
+            "output_file": "test_cases/output/bit_puzzle.txt",
+            "use_valgrind": "y",
+            "points": 0.25
+        }
+    ]
+}
