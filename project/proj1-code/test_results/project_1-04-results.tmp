@@ -1,8 +1,0 @@
-==============================================================================================================================
-== Test 4: Word Lookups in Empty Dictionary
-== Attempts to look up words in an empty dictionary. Should get a not found
-== message for any lookup attempt.
-Running test...
-Expected output is in file 'test_results/raw/project_1-04-expected.tmp'
-Actual output is in file 'test_results/raw/project_1-04-actual.tmp'
-Test PASSED

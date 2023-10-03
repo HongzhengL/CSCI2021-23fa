@@ -1,8 +1,0 @@
-==============================================================================================================================
-== Test 30: Dictionary and Spell Check File Command Line Arguments
-== Specifies both a dictionary file and a file to spell check as command line
-== arguments.
-Running test...
-Expected output is in file 'test_results/raw/project_1-30-expected.tmp'
-Actual output is in file 'test_results/raw/project_1-30-actual.tmp'
-Test PASSED

@@ -1,8 +1,0 @@
-==============================================================================================================================
-== Test 22: Spell Check with Empty Dictionary
-== Runs spell check on a small file with an empty dictionary. All words should
-== be marked as incorrect.
-Running test...
-Expected output is in file 'test_results/raw/project_1-22-expected.tmp'
-Actual output is in file 'test_results/raw/project_1-22-actual.tmp'
-Test PASSED

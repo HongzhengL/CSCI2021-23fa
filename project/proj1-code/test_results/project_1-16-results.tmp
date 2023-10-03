@@ -1,8 +1,0 @@
-==============================================================================================================================
-== Test 16: Spell Check on Non-Existent File
-== Attempts to run spell check command on a non-existent file and checks that
-== proper error message is printed.
-Running test...
-Expected output is in file 'test_results/raw/project_1-16-expected.tmp'
-Actual output is in file 'test_results/raw/project_1-16-actual.tmp'
-Test PASSED

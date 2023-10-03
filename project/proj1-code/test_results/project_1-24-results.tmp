@@ -1,8 +1,0 @@
-==============================================================================================================================
-== Test 24: Large Dictionary and Large File Spell Check
-== Loads a large dictionary from a provided file, then spell checks a large
-== file.
-Running test...
-Expected output is in file 'test_results/raw/project_1-24-expected.tmp'
-Actual output is in file 'test_results/raw/project_1-24-actual.tmp'
-Test PASSED

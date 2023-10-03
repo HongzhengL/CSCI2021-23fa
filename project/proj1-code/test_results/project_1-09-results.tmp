@@ -1,8 +1,0 @@
-==============================================================================================================================
-== Test 9: Add and Look Up Multiple Words 2
-== Add several words to the dictionary, then look up several words, only some of
-== which are present in the dictionary.
-Running test...
-Expected output is in file 'test_results/raw/project_1-09-expected.tmp'
-Actual output is in file 'test_results/raw/project_1-09-actual.tmp'
-Test PASSED

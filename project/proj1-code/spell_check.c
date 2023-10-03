@@ -10,34 +10,30 @@
 // 'file_name': Name of the file to spell check
 // 'dict': A dictionary containing correct words
 int spell_check_file(const char *file_name, const dictionary_t *dict) {
-    // if (dict == NULL) {
-    //     return -1;
-    // }
-    char line[1024];
-    char new_line[1024];
-    char word[MAX_WORD_LEN];
-    memset(new_line, '\0', sizeof(new_line));
-    FILE* fp = fopen(file_name, "r");
-    if (fp == NULL) {
-        return -2;
+    char line[1024];        //read in line
+    char new_line[1024];    //for output
+    char word[MAX_WORD_LEN];    //Allows words up to 127 characters
+    FILE* fp = fopen(file_name, "r");   //opening target file
+    if (fp == NULL) {   //Checks for errors when opening file
+        return -1;
     }
     int in_cnt = 0, out_cnt = 0, word_len = 0;
     while (fgets(line, sizeof(line), fp) != NULL) {
         in_cnt = 0, out_cnt = 0, word_len = 0;
         memset(new_line, '\0', sizeof(new_line));
         memset(word, '\0', MAX_WORD_LEN);
-        while(line[in_cnt] != '\0') {
-            if (isspace(line[in_cnt])) {
-                if (!dict_find(dict, word)) {
-                    new_line[out_cnt] = '[';
+        while(line[in_cnt] != '\0') {   //reading in each word from the target file
+            if (isspace(line[in_cnt])) {    //Allows arbitrary whitespace between words
+                if (!dict_find(dict, word)) {   //checking if each word is correctly spelled
+                    new_line[out_cnt] = '[';    //Adds markers where needed in output to identify misspelled words
                     new_line[out_cnt+1] = 'X';
                     new_line[out_cnt+2] = ']';
                     out_cnt+=3;
                 }
                 memset(word, 0, MAX_WORD_LEN);
                 word_len = 0;
-                new_line[out_cnt] = line[in_cnt];
-            } else if (isalpha(line[in_cnt])) {
+                new_line[out_cnt] = line[in_cnt];   //Allows arbitrary whitespace between words
+            } else if (isalpha(line[in_cnt])) { //read in word
                 word[word_len] = line[in_cnt];
                 new_line[out_cnt] = line[in_cnt];
                 ++word_len;
@@ -47,7 +43,7 @@ int spell_check_file(const char *file_name, const dictionary_t *dict) {
         }
         printf("%s\n", new_line);
     }
-    fclose(fp);
+    fclose(fp); //Closes file when done
     return 0;
 }
 
@@ -58,28 +54,28 @@ int main(int argc, char **argv) {
     dictionary_t *dict = NULL;
     char cmd[MAX_CMD_LEN];
 
-    if (argc == 2) {
+    if (argc == 2) {    //Command-line arguments: Supports reading in dictionary from specified file
         dict_free(dict);
         dict = read_dict_from_text_file(argv[1]);
         if (dict == NULL) {
-            printf("Failed to read dictionary from text file\n");
+            printf("Failed to read dictionary from text file\n");   //Command-line arguments: Prints out errors where necessary
             return -1;
         } else {
             printf("Dictionary successfully read from text file\n");
         }
     } 
-    else if (argc == 3) {
+    else if (argc == 3) {   //Command-line arguments: Supports reading in dictionary and spell check target from specified files
         dict_free(dict);
         dict = read_dict_from_text_file(argv[1]);
         if (dict == NULL) {
-            printf("Failed to read dictionary from text file\n");
+            printf("Failed to read dictionary from text file\n");   //Command-line arguments: Prints out errors where necessary
             return -1;
         } else {
             printf("Dictionary successfully read from text file\n");
         }
         int flag = spell_check_file(argv[2], dict);
-        if (flag == -2) {
-            printf("Spell check failed\n");
+        if (flag == -1) {
+            printf("Spell check failed\n");     //Command-line arguments: Prints out errors where necessary
             dict_free(dict);
             return -1;
         }
@@ -125,11 +121,10 @@ int main(int argc, char **argv) {
             } else {
                 printf("\'%s\' not found\n", word);
             }
-
         } else if (strcmp("print", cmd) == 0) {
             dict_print(dict);
         } else if (strcmp("load", cmd) == 0) {
-            dict_free(dict);
+            dict_free(dict);        //free old dictionary when a new dictionary is created
             char file_name[128];
             scanf("%s", file_name);
             dict = read_dict_from_text_file(file_name);
@@ -149,14 +144,14 @@ int main(int argc, char **argv) {
             char file_name[128];
             scanf("%s", file_name);
             int flag = spell_check_file(file_name, dict);
-            if (flag == -2) {
+            if (flag == -1) {
                 printf("Spell check failed\n");
             }
         } else {
             printf("Unknown command %s\n", cmd);
         }
     }
-
     dict_free(dict);
     return 0;
 }
+
