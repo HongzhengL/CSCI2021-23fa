@@ -137,6 +137,9 @@ void write_node(FILE *fp, const node_t *my_node) {
 }
 
 int write_dict_to_text_file(const dictionary_t *dict, const char *file_name) {
+    if (dict == NULL) { //Handles errors when nothing on dict
+        return -1;
+    }
     FILE *fp = fopen(file_name, "w");   //function call and arguments for opening file
     if (fp == NULL) {   //Handles errors when opening file
         return -1;
