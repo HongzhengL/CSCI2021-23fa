@@ -39,13 +39,13 @@ QUIZ Build Commands
   To remove all the compiled files (executable programs and `.o' files),
   use `make' as follows:
   - ( ) make sanitize
-  - ( ) make clean
+  - (X) make clean
   - ( ) make remove
   - ( ) make gc
 
   To run ALL the automated tests for the code through the given
   `Makefile' use the following command:
-  - ( ) make test
+  - (X) make test
   - ( ) make verify
   - ( ) make examine
   - ( ) make unit
@@ -57,14 +57,14 @@ QUIZ Build Commands
   - ( ) make test2
   - ( ) make test 2
   - ( ) make unit test=2
-  - ( ) make test testnum=2
+  - (X) make test testnum=2
 
   If I change code and want to see if any more tests pass after the
   change, I should type
   - ( ) `make' to rebuild followed by `make test' to run tests
   - ( ) `make clean' followed by `make' followed by `make test'
   - ( ) `make test' will rebuild based on changes AND then run tests
-  - ( ) ALL of these will work but `make test' is the shortest and sweetest.
+  - (X) ALL of these will work but `make test' is the shortest and sweetest.
 
   Since compiling C programs involving several files is a bit painful,
   we will provide a `Makefile' on all of the course projects and the

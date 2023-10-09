@@ -67,6 +67,14 @@ int main(int argc, char *argv[]) {
         // Otherwise, print "not found"
         // See the test files for the exact expected formats
 
+        else if (strcmp("contains", cmd) == 0) {
+            scanf("%s", cmd); 
+            if (list_contains(&list, cmd)) {
+                printf("\'%s\' is present\n", cmd);
+            } else {
+                printf("not found\n");
+            }
+        }
 
         else {                                 // unknown command
             printf("unknown command %s\n",cmd);
