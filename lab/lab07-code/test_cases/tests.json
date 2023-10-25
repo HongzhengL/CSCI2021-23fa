@@ -1,0 +1,20 @@
+{
+    "name": "Lab 07",
+    "tests": [
+        {
+            "name": "Quiz: QUESTIONS.txt",
+            "description": "Determines if the answers in QUESTIONS.txt are correct",
+            "command": "test_cases/resources/socrates QUESTIONS.txt -c test_cases/resources/quiz_sum.json -a",
+            "output_file": "test_cases/output/quiz.txt",
+            "points": 0.5
+        },
+        {
+            "name": "order3_asm Program",
+            "description": "Tests the code for the order3_asm program to determine if it operates correctly. To do so, it must allocate stack space correctly and call some functions with addresses within that new stack space passed as arguments.",
+            "command": "./order3_asm",
+            "output_file": "test_cases/output/order3_asm.txt",
+            "use_valgrind": "y",
+            "points": 0.5
+        }
+    ]
+}
