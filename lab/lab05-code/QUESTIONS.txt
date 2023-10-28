@@ -47,7 +47,7 @@ Starting Up
   - ( ) Use the command 'set args input.txt' once and then each 'run'
     will use those arguments
   - ( ) Use the command 'run input.txt' each time you run
-  - ( ) Either of the above will work
+  - (X) Either of the above will work
   - ( ) Start GDB as 'gdb ./phase03 input.txt'
 
 
@@ -58,13 +58,13 @@ Setting a Breakpoint
   line that reads 'int hit = shot ^ targ;'?
   - ( ) 'break int hit = shot ^ targ'
   - ( ) 'break phase03'
-  - ( ) 'break phase03.c:37'
+  - (X) 'break phase03.c:37'
   - ( ) 'break next hit'
 
   After hitting the specified breakpoint, which of the following GDB
   commands will advance to where the next **breakpoint** that is set?
   - ( ) 'next'
-  - ( ) 'continue'
+  - (X) 'continue'
   - ( ) 'run'
   - ( ) 'advance'
 
@@ -133,7 +133,7 @@ next command in gdb
 
   After executing 'next', which option correctly indicates where GDB
   will get control back?
-  - ( ) OPTION A because 'next' moves to the next line of code executing
+  - (X) OPTION A because 'next' moves to the next line of code executing
     all functions and operations on a given line.
   - ( ) OPTION B because 'next' executes the next operation and
     completes it which will be the 'next_input()' function but the
@@ -155,7 +155,7 @@ step command in gdb
   - ( ) OPTION B because 'step' executes the next operation and
     completes it which will be the 'next_input()' function but the
     'atoi()' function will not be run
-  - ( ) OPTION C because 'step' steps into functions and executes the
+  - (X) OPTION C because 'step' steps into functions and executes the
     next operation which is to start running the 'next_input()'
     function.
 

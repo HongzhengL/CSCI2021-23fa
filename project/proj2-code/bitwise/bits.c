@@ -135,7 +135,8 @@ NOTES:
  *   Rating: 1
  */
 int isZero(int x) {
-    return 2;
+    /* When x != 0, !x will be 0; when x == 0, !x will be 1 */
+    return !x;
 }
 
 /*
@@ -146,7 +147,16 @@ int isZero(int x) {
  *   Rating: 1
  */
 int bitNor(int x, int y) {
-    return 2;
+    /* 
+        x   y     ~x  ~y      x|y     ~(x|y)    (~x)&(~y)
+        0   0     1   1       0         1           1
+        1   1     0   0       1         0           0
+        0   1     1   0       1         0           0
+        1   0     0   1       1         0           0
+
+        Therefore, ~(x|y) == (~x)&(~y)
+     */
+    return (~x)&(~y);
 }
 
 /*
@@ -157,7 +167,15 @@ int bitNor(int x, int y) {
  *   Rating: 2
  */
 int distinctNegation(int x) {
-    return 2;
+    /**
+     * Using 2's complement, we can represent -x as (~x+1)
+     * If x and -x are distinct (i.e., x != -x), there will be at least one bit position where they differ, 
+     * then x ^ (~x+1) will result in a non-zero result.
+     * If x and -x are distinct (i.e., x == -x), then x ^ (~x+1) will be 0
+     * Therefore, we can use the !! operator to return 1 if x != -x
+     * and 0 otherwise
+    */
+    return !!(x ^ (~x + 1));
 }
 
 /*
@@ -169,7 +187,16 @@ int distinctNegation(int x) {
  *   Rating: 2
  */
 int dividePower2(int x, int n) {
-    return 2;
+    /**
+     * If x is positive, we can simply shift x to the right by n bits
+     * If x is negative, since the result rounds towards 0, we need to add an adjustment to the result
+     * The adjustment is 2^n - 1, that is add 1 to the result if x has remainder
+     * We can create a mask of n lower bits as 1, and then add 1 to it to get the adjustment
+     * Then we can add the adjustment to x and shift the result to the right by n bits to get the final result
+    */
+    int mask = (1 << n) + ~0;    // Creates a mask of n lower bits as 1
+    int adjustment = (x >> 31) & mask; // If x is negative, this gives an adjustment
+    return (x + adjustment) >> n;
 }
 
 /*
@@ -181,7 +208,12 @@ int dividePower2(int x, int n) {
  *   Rating: 2
  */
 int getByte(int x, int n) {
-    return 2;
+    /**
+     * We can shift x to the right by n*8 (n<<3) bits to get the byte we want
+     * Then we can mask the result with 0xff to get rid of the higher bits
+     * and return the lower 8 bits
+    */
+    return ((x >> (n << 3)) & (0xff));
 }
 
 /*
@@ -192,7 +224,16 @@ int getByte(int x, int n) {
  *   Rating: 2
  */
 int isPositive(int x) {
-    return 2;
+    /**
+     * We use x >> 31 to get the sign bit of x
+     * If x is positive, then x >> 31 will be 0
+     * If x is negative, then x >> 31 will be -1
+     * However, if x is 0, then x >> 31 will be 0
+     * So, we use !x to check if x is 0
+     * If x is 0, then !x will be 1, which will be different from x >> 31, and we return !(1 ^ 0) = 0
+     * If x is positive, !x will be 0 and x >> 31 will be 0, and we return !(0 ^ 0) = 1
+    */
+    return !((!x) ^ (x >> 31));
 }
 
 /*
@@ -207,7 +248,17 @@ int isPositive(int x) {
  *   Rating: 2
  */
 unsigned floatNegate(unsigned uf) {
-    return 2;
+    /**
+     * If uf is NaN, then return uf
+     * Otherwise, we can use `sign_mask' to flip the sign bit to get the negation
+    */
+    unsigned sign_mask = 0x80000000;
+    
+    if ((uf & 0x7F800000) == 0x7F800000 && (uf & 0x007FFFFF) != 0) {
+        return uf; 
+    }
+    
+    return uf ^ sign_mask;
 }
 
 /*
@@ -218,7 +269,15 @@ unsigned floatNegate(unsigned uf) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-    return 2;
+    /**
+     * If x <= y, then y - x >= 0
+     * If y - x >= 0, then the sign bit of y - x (i.e., diff >> 31), will be 0
+     * So, we can shift y - x to the right by 31 bits and then use the ! operator
+     * to return 1 if x <= y and 0 otherwise
+    */
+    int diff = y + (~x + 1);
+    int sign = diff >> 31;
+    return !sign;
 }
 
 /*
@@ -231,8 +290,30 @@ int isLessOrEqual(int x, int y) {
  *   Max ops: 16
  *   Rating: 3
  */
+
 int bitMask(int highbit, int lowbit) {
-    return 2;
+    /**
+     * Let's say we want to generate a mask of n bits of 1's between lowbit and highbit, all other bits are 0
+     * This function chooses to first generate n bits of 0's between lowbit and highbit, all other bits are 1
+     * then use the bitwise NOT operator to flip all the bits
+     * Therefore, we will perform left shift on (~0), (i.e., all bits are 1)
+     * However, since we're operating on int rather than unsigned int, we need to be careful about the sign bit
+     * If highbit is 31, then we can't make sign bit to be 0 due to the nature of int
+     * Therefore, we choose to perform the same operation on bitMask(highbit-1, lowbit) instead
+     * And manually set highbit to be 1
+     * To prevent lowbit > highbit, we calculate the `diff' between highbit and lowbit
+     * If `diff' is negative, then the `sign' bit will be 1, and we use (~sign)&result to return all 0's
+    */
+    int subHigh = 1 << highbit;
+    int diff = (highbit + (~lowbit+1)); 
+    int sign = diff >> 31;
+
+    int sub = (~0) << diff;     // Generate (n-1) bits of 0's, diff = diff + 1 - 1
+    int subMask = (~sub) << lowbit;     // first flip sub to get n bits of 1's, then shift it to the right position
+    int result = subMask | subHigh;     // set highbit to be 1
+
+    return (~sign) & result;
+    // return (~sign) & ((~(((~0) << (diff))) << (lowbit)) | subHigh);
 }
 
 /*
@@ -244,7 +325,29 @@ int bitMask(int highbit, int lowbit) {
  *   Rating: 3
  */
 int addOK(int x, int y) {
-    return 2;
+    /**
+     * If x and y have the same sign, then x + y will overflow if and only if x + y has a different sign
+     * If x and y have different signs, then x + y will never overflow
+     * (x>>31)^(y>>31) will be 0 if x and y have the same sign, or some value (-1 or 1) otherwise
+     * !(x>>31)^((x+y)>>31) will be some value (-1 or 1) if x and (x + y) have the same signs, or 0 otherwise
+     * We use double negation ensures the result is either 0 or 1.
+     * If x and y have different signs, then (x>>31)^(y>>31) will make the whole return expression 1
+     * If x and y have the same signs, we determine whether x + y has the same sign by checking !(x>>31)^((x+y)>>31)
+     * If yes, then will not overflow, and the whole return expression will be 1
+     * Else, it overflows, and the whole return expression will be 0
+    */
+    int signX = x >> 31;
+    int signY = y >> 31;
+    int sum = x + y;
+    int signSum = sum >> 31;
+
+    int sameSign = (signX ^ signY);
+    int sumDiffSign = !(signX ^ signSum);
+
+    int noOverflow = (sameSign) | (sumDiffSign);
+
+    return !!noOverflow; 
+    // return !!(((x>>31)^(y>>31)) | !((x>>31)^((x+y)>>31)));
 }
 
 /*
@@ -259,7 +362,60 @@ int addOK(int x, int y) {
  *   Rating: 4
  */
 unsigned floatScale64(unsigned uf) {
-    return 2;
+    /**
+     * We first extract the sign, exponent and mantissa of uf
+     * If it's too big to be represented as a float, we return uf
+     * If it's too small to be represented as a float, we return uf
+     * If it's a denorm, we shift the mantissa to the left by 6 bits
+     * If it's a normalized number, we increase the exponent by 6
+     * After increasing the exponent, if it's too big to be represented as a float, we return +INF
+     * However, if the mantissa is big enough for a denorm, multiply by 64 will result in a normalized number
+     * Therefore, we need to find the position of the leading 1 bit after the multiplication 
+     * to adjust the exponent and mantissa accordingly. 
+    */
+    unsigned sign = uf >> 31;
+    unsigned exponent_mask = 0x7F800000;
+    unsigned exponent = (uf & exponent_mask) >> 23;
+    unsigned mantissa = uf & 0x7FFFFF;
+
+    if (exponent >= 0xff) {
+        return uf;
+    }
+
+    if ((exponent) == 0 && mantissa == 0) {
+        return uf;
+    }
+
+    if ((exponent) == 0 && mantissa != 0) {
+        if (mantissa >= 0x20000) {
+            int n = 1;
+            if (mantissa >= 0x400000){
+                n = 1;
+            } else if (mantissa >= 0x200000) {
+                n = 2;
+            } else if (mantissa >= 0x100000) {
+                n = 3;
+            } else if (mantissa >= 0x80000) {
+                n = 4;
+            } else if (mantissa >= 0x40000) {
+                n = 5;
+            } else {
+                n = 6;
+            }
+            return ((((mantissa) << n) & 0x7FFFFF) | (sign << 31) | (0x3800000-n*0x800000));
+        } else {    // If the mantissa is not large enough for a denorm to be normalized after multiplying by 64
+            return ((mantissa << 6) | (sign << 31));
+        }
+    }
+
+    // Increase the exponent by 6 (which is equivalent to multiplying the float by 64)
+    exponent += 6;
+
+    if (exponent >= 0xff) {
+        return ((sign << 31) | exponent_mask);
+    }
+
+    return ((uf & ~exponent_mask) | (exponent << 23));
 }
 
 /*
@@ -276,5 +432,32 @@ unsigned floatScale64(unsigned uf) {
  *   Rating: 4
  */
 unsigned floatPower2(int x) {
-    return 2;
+    /**
+     * First, we calculate the exponent of 2.0^x in bit level, that is `x + bias' in `stored_exponent'
+     * If it's too small (stored_exponent <= 0), we first check if it can be represented as a denorm (-23 < stored_exponent <= 0)
+     * If yes, we shift 1 to the right by (stored_exponent+22) bits to get the denorm representation
+     * If not, we return 0
+     * If it's too large (stored_exponent > 255), we return +INF
+     * 
+    */
+    int bias = 127;
+    int stored_exponent = x + bias;
+
+    // Denormalized number
+    if (stored_exponent <= 0 && stored_exponent > -23) {
+        return (1 << (stored_exponent+22));
+        // return (1 << (149+x));
+    } 
+    
+    // Too small, return 0
+    if (stored_exponent <= -23) {
+        return 0;
+    }
+
+    // Too large, return +INF
+    if (stored_exponent > 255) {
+        return 0x7F800000; 
+    }
+    
+    return (stored_exponent << 23);
 }

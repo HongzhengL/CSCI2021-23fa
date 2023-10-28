@@ -34,4 +34,4 @@ LOOP_BEGIN:
 LOOPING:
     imul %edi, %r10d
     add $1, %r11d
-    call LOOP_BEGIN
+    jmp LOOP_BEGIN

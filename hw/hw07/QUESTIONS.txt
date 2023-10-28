@@ -1,0 +1,180 @@
+                           _________________
+
+                            HW 07 QUESTIONS
+                           _________________
+
+Write your answers to the questions below directly in this text file to
+prepare for the associated quiz.
+
+
+PROBLEM 1: Quote Binary Debugging
+=================================
+
+  The two files `quote_main.c' and `quote_data.o' can be compiled
+  together to form an executable as in the following.
+  ,----
+  | > gcc quote_main.c quote_data.o
+  | > ./a.out
+  | Complete this sentence by C++ creator Bjarne Stroustrup:
+  | C makes it easy to shoot yourself in the foot; ...
+  |
+  | enter a number from 0 to 15: 2
+  |
+  | 2: This is why most programmers are such poor dancers.
+  |
+  | Have a nice tall glass of ... NOPE.
+  `----
+  As in a previous exercise, the intention is to use the debugger to
+  detect the correct response. In this case however, the correct
+  completion is present in `quote_main.c'. However, one must enter a
+  number which selects from several responses in an attempt to match the
+  correct completion. It is possible to "brute force" the solution by
+  trying all solutions. However, the intent of the activity is to
+  explore running code with the debugger to answer the questions
+  below. This will give insight into some stages of the binary bomb
+  assignment.
+
+
+A
+~
+
+  Use some binary utility programs to print out the symbols that are
+  present in `quote_data.o'.  Review the previous homework if you have
+  forgotten programs like `nm' and `objdump' can print symbols in a
+  binary object file. Speculate as to which data might pertain to where
+  potential options are stored.
+
+
+B
+~
+
+  The entry point into the assembly code in `quote_data.o' is the
+  function `get_it'.  Use either the debugger or a disassembly of the
+  object to trace whether this functions performs the entire computation
+  or if other functions are also used. Use this along with other
+  observations of the content of the `quote_data.o' file to infer what
+  kind of data structure the choices are stored in.
+
+
+C
+~
+
+  Use the debugger to step through the functions in `quote_data.o'.
+  Keep in mind that the parameters to the function follow the standard
+  convention: 1st param in register `%rdi', second in `%rsi', and so
+  forth.  You should be able to identify a loop in a critical function
+  in which the choices are present.
+
+  Note that quote_data.o does *not* include debugging information, so gdb
+  will not be able to show you the C source code it was compiled from. Instead,
+  use commands like "layout asm" and "layout regs" in gdb's TUI mode to observe
+  how this code runs at the assembly level. Refer to the GDB guide linked to
+  from our Canvas home page for tips on debugging assembly.
+
+  Use the `print' and `x' commands in gdb to examine data pointed to by
+  registers to help identify where the correct response is located.
+
+  Keep in mind that often the `testX' instruction is used to determine
+  truthy/falsey qualities about a register. This takes several forms
+  that were mentioned in lecture.
+  - `testl %edx, %edx' may be used to check if `%edx' is 0 or negative
+  - `testq %rax, %rax' may be used to check if `%rax' is a `NULL' pointer
+  You are likely to see some of the above uses for the test instruction
+  while examining the assembly code in `quote_data.o'
+
+  Recall that you can examine memory addresses pointed to registers with
+  gdb commands like the following.
+  ,----
+  | (gdb) x/d $rax   # print memory pointed to by rax as a decimal integer
+  | (gdb) x/x $rax   # print memory pointed to by rax as a hex number
+  | (gdb) x/s $rax   # print memory pointed to by rax as a string
+  `----
+
+  Include what debugger techniques you used in your answer along with
+  the index of the correct completion.
+
+
+PROBLEM 2: Stack Smashing
+=========================
+
+A
+~
+
+  Examine the obviously flawed code in `smash1.c'.
+  ,----
+  |  1  // smash1.c: demonstrates problems with the function call stack
+  |  2  #include <stdio.h>
+  |  3
+  |  4  void fill_seq(int *a);
+  |  5  void demo();
+  |  6
+  |  7  int main() {
+  |  8      printf("About to do the demo\n");
+  |  9      demo();
+  | 10      printf("Demo Complete\n");
+  | 11      return 0;
+  | 12  }
+  | 13
+  | 14  void demo() {
+  | 15      int arr[4];
+  | 16
+  | 17      fill_seq(arr);
+  | 18
+  | 19      for(int i = 0; i < 4; i++){
+  | 20          printf("[%d]: %d\n", i, arr[i]);
+  | 21      }
+  | 22  }
+  | 23
+  | 24  #define END 8
+  | 25  void fill_seq(int *a) {
+  | 26      for(int i = 0; i < END; i++) {
+  | 27          a[i] = (i+1) * 2;
+  | 28      }
+  | 29  }
+  `----
+  Compiling and running this code with gcc on a Linux system (and
+  perhaps in other compiler/OS configurations) will yield the following
+  kind of behavior.
+  ,----
+  | > gcc smash1.c
+  | > ./a.out
+  | About to do the demo
+  | [0]: 2
+  | [1]: 4
+  | [2]: 6
+  | [3]: 8
+  | --- stack smashing detected ---: terminated
+  | Aborted (core dumped)
+  `----
+  Describe the kind of error that is occurring in this code and why it
+  is referred to as "stack smashing." Identify which part of the code is
+  causing the problem.
+
+
+B
+~
+
+  Consider the alternative file `smash2.c'.  Note the similarities to
+  the previous program but also slight changes in it.  Compile and run
+  this program and report what errors you see. Describe if the errors
+  are similar or not and relate these to changes in the program.
+
+
+C
+~
+
+  Recompile both smash programs as shown and use Valgrind to run them
+  again. Show your output and comment on how much information Valgrind
+  provides about each program run and the out-of-bounds array accesses
+  that are performed.  Based on your observations, mention which memory
+  area Valgrind monitors more effectively.
+
+  ,----
+  | > gcc -g smash1.c
+  | > valgrind ./a.out
+  | ...
+  |
+  | > gcc -g smash2.c
+  | > valgrind ./a.out
+  | ...
+  `----
