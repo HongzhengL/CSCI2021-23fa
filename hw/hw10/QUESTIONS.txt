@@ -1,0 +1,292 @@
+                           _________________
+
+                            HW 10 QUESTIONS
+                           _________________
+
+
+Write your answers to the questions below directly in this text file to prepare
+for the associated quiz. Credit for the HW is earned by completing the online
+quiz.
+
+
+Note on Experimentation: Run on csel-kh1262-NN
+==============================================
+
+  As has been the case in the past, timing execution of code is always
+  influenced by the specific machine the code is run on. While you are
+  free to run the benchmark codes anywhere on HWs, TAs will be familiar
+  with the answers for runs on csel-kh1262-xx.cselabs.umn.edu.  For the
+  most consistent results, run the programs there.
+
+
+PROBLEM 1: colmins_main.c
+=========================
+
+(A) Timing
+~~~~~~~~~~
+
+  Compile and run the provided `colmins_main' program as indicated
+  below.
+
+  ,----
+  | > make
+  | gcc -Wall -g -Og -c colmins_main.c
+  | gcc -Wall -g -Og -c colmins_funcs.c
+  | gcc -Wall -g -Og -c matvec_util.c
+  | gcc -Wall -g -Og -o colmins_main colmins_main.o colmins_funcs.o matvec_util.o
+  |
+  | > ./colmins_main 8000 16000
+  `----
+
+  Notice that the size of the matrix being used is quite large: 8000
+  rows by 16000 columns. You may time other sizes but 8000x16000 is
+  usually large enough to get beyond obvious cache effects on most
+  machines.
+
+  Run the program several times to ensure that you get a good sense of
+  what its normal behavior is like: there should be timing differences
+  between the different functions reported on.
+
+  Paste the timing results produced below for `./colmins_main 8000 16000'
+
+
+(B) Tricks
+~~~~~~~~~~
+
+  Examine the source code for `colmins_main.c'. Identify the technique
+  that is used to avoid a large amount of repeated code to time the
+  multiple functions.
+
+
+PROBLEM 2: Comparisons in colmins_funcs.c
+=========================================
+
+(A) col_mins1 baseline
+~~~~~~~~~~~~~~~~~~~~~~
+
+  Examine the `col_mins1' function in `colmins_funcs.c' and describe the
+  basic approach it uses to solve the problem of finding the minimum of
+  each column of a matrix.
+  - What pattern of access is used? Is this advantageous for the in-memory
+    layout of the matrix?
+  - What local variables are used versus main memory gets/sets?
+
+
+(B) col_mins2 Comparison
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Examine the differences between `col_mins1' and `col_mins2'.
+  Particularly comment on:
+  - Any differences in memory access pattern
+  - Any differences in use of local variables/main memory
+  - Any differences in speed
+
+
+(C) col_mins3 Comparison
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+  `col_mins3' implements an optimization called loop unrolling. In this
+  technique, rather than iterate by single increments, larger steps are
+  taken. Each iteration uses multiple local variables to store
+  partial results that must eventually be combined. All this is meant to
+  allow the processor to execute more instructions in sequence before
+  looping back, which may enable more efficient pipelined and superscalar
+  operations.
+
+  Examine the differences between `col_mins2' and `col_mins3'.
+  Particularly comment on:
+  - Any differences in memory access pattern
+  - Any differences in use of local variables/main memory
+  - Any differences in speed that might be due to the new optimizations
+
+
+(D) col_mins4 Comparison
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+  `col_mins4' also uses loop unrolling but in a different way than
+  `col_mins3'.
+
+  Examine the differences between `col_mins3' and `col_mins4'.
+  Particularly comment on:
+  - What loops are "unrolled" in each and how does this affect the
+    remaining code?
+  - Any differences in memory access pattern
+  - Any differences in use of local variables/main memory
+  - Any differences in speed that might be due to the new optimizations
+
+
+(E) col_mins5 Comparison: The Real Lesson
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  `col_mins5' is inherently different than all of the other routines.
+  Examine its structure carefully and ensure that you understand it as
+  it may prove useful in an assignment. Particularly comment on:
+  - Any differences in memory access pattern from the others
+  - Any differences in use of local variables/main memory
+  - Any differences in speed that might be due to the new optimizations
+
+
+PROBLEM 3: Cache and Loop Iterations
+====================================
+
+  Below are tables showing values in Main Memory and the state of a small
+  Cache.  Beneath this is a short code fragment that sums elements from main
+  memory. The code has a user parameter `stride'. For strides of 1, 2, 3, and 4
+  work through how the code changes the cache and count how many cache
+  hits/misses occur with the given stride. Show the final state of cache in
+  each case.
+
+
+Main Memory
+~~~~~~~~~~~
+
+  ,----
+  | | Addr | Addr Bits      | Value |
+  | |------+----------------+-------|
+  | |   20 | 00  10  0000   |     9 |
+  | |   24 | 00  10  0100   |    10 |
+  | |   28 | 00  10  1000   |    11 |
+  | |   2C | 00  10  1100   |    12 |
+  | |   30 | 00  11  0000   |    13 |
+  | |   34 | 00  11  0100   |    14 |
+  | |   38 | 00  11  1000   |    15 |
+  | |   3C | 00  11  1100   |    16 |
+  | |   40 | 01  00  0000   |    17 |
+  | |   44 | 01  00  0100   |    18 |
+  | |   48 | 01  00  1000   |    19 |
+  | |   4C | 01  00  1100   |    20 |
+  | |   50 | 01  01  0000   |    21 |
+  | |   54 | 01  01  0100   |    22 |
+  | |   58 | 01  01  1000   |    23 |
+  | |   5C | 01  01  1100   |    24 |
+  | |   60 | 01  10  0000   |    25 |
+  | |   64 | 01  10  0100   |    26 |
+  | |   68 | 01  10  1000   |    27 |
+  | |   6C | 01  10  1100   |    28 |
+  | |------+----------------+-------|
+  | |      | Tag Idx Offset |       |
+  `----
+
+
+Cache
+~~~~~
+
+  - Direct-mapped: 1 block per "set"
+  - 16-byte lines = 4-bit offset
+  - 4 Sets = 2-bit index
+  - 8-bit Address = 2-bit tag
+  - Total Cache Size = 64 bytes = 4 sets * 16 bytes/set
+  - Mostly cold with some data from an earlier part of the code
+
+  ,----
+  | |     |   |     | Blocks/Lines          |
+  | | Idx | V | Tag | 0-3  4-7  8-11  12-15 |
+  | |-----+---+-----+-----------------------|
+  | |  00 | 1 | 00  | 1    2    3     4     |
+  | |  01 | 0 | -   | -                     |
+  | |  10 | 0 | -   | -                     |
+  | |  11 | 0 | -   | -                     |
+  | |-----+---+-----+-----------------------|
+  | | Idx | V | Tag | 0-3  4-7  8-11  12-15 |
+  `----
+
+
+Code
+~~~~
+
+  ,----
+  | int *data = (int *) 0x20;           // address of start of the array
+  | int stride;
+  | scanf("%d", &stride);   // user enters 1, 2, 3, or other values
+  | int sum = 0;
+  | for(int i = 0; i < 20; i += stride){
+  |     sum += data[i];
+  | }
+  `----
+
+
+PROBLEM 4: Timing Benchmarks
+============================
+
+  The code in `reversal_benchmark.c' implements two functions which
+  reverse the elements of an array. They take markedly different
+  approaches.
+
+  ,----
+  | void reverse_arr1(int *arr, long size) {
+  |     int *tmp = malloc(sizeof(int) * size);
+  |     for (long i = 0; i < size; i++) {
+  |       tmp[i] = arr[size-i-1];
+  |   }
+  |   for (long i = 0; i < size; i++) {
+  |       arr[i] = tmp[i];
+  |   }
+  |   free(tmp);
+  | }
+  |
+  | void reverse_arr2(int *arr, long size) {
+  |     for (long i = 0; i < size/2; i++) {
+  |       int tmp = arr[i];
+  |       arr[i] = arr[size-i-1];
+  |       arr[size-i-1] = tmp;
+  |   }
+  | }
+  `----
+
+
+(A) Predictions
+~~~~~~~~~~~~~~~
+
+  Predict which of these two functions will run faster based on their
+  code characteristics. Justify your answer by contrasting the features
+  of the two reversal functions.
+
+
+(B) Timing
+~~~~~~~~~~
+
+  Modify the provided `reversal_benchmark.c' file to perform timing
+  calculations on the two functions as they are called on different
+  sizes of arrays. You may want to print your results in a tabular format.
+
+  Note also that the code runs each function repeatedly. You may want to time
+  the total time for all repetitions of each function. We do this for the same
+  reason we have multiple experimental trials in chemistry and physics -- it
+  helps limit the impact of noise in our data.
+
+  Make sure to compile/run with a convention like the following:
+  ,----
+  | > make reversal_benchmark         # Compiled with minimal optimizations
+  |
+  | > ./reversal_benchmark            # show usage
+  | usage: ./reversal_benchmark <min_pow2> <max_pow2> <repeats>
+  |
+  | > ./reversal_benchmark 10 20 100  # run benchmark, size 2^10 to 2^20, 100 repeats per
+  |       SIZE       rev1       rev2
+  |       1024       ???        ???
+  |       2048       ???        ???
+  |       4096       ???        ???
+  |       8192       ???        ???
+  |      16384       ???        ???
+  |      32768       ???        ???
+  |      65536       ???        ???
+  |     131072       ???        ???
+  |     262144       ???        ???
+  |     524288       ???        ???
+  |    1048576       ???        ???
+  `----
+
+  Paste the C code you wrote below to show you how you timed the
+  function runs.
+
+
+(C) Analysis
+~~~~~~~~~~~~
+
+  Paste the table of numbers your code produced for timing the two
+  reversal functions. Was your prediction accurate? That is, did the function
+  you expect to be faster actually take less time when measured?
+
+  Version 2 should be observed as faster. The reduction in memory traffic
+  (avoiding the array-to-array copy) outweighs the arguably better spatial
+  locality of version 1.
