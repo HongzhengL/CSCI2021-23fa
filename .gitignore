@@ -1,0 +1,9 @@
+*
+!*.c
+!*.h
+!.s
+!*.txt
+!testius
+!Makefile
+!/.gitignore
+!test_cases/
