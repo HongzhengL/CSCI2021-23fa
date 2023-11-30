@@ -1,0 +1,5 @@
+$ ./email_lookup cse_depts.dat follstad@umn.edu
+$ ./email_lookup cse_depts.dat sjguy@umn.edu
+$ ./email_lookup cse_depts.dat heimdahl@umn.edu
+$ ./email_lookup cse_depts.dat linus@umn.edu
+$ exit

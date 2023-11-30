@@ -1,0 +1,10 @@
+$ ./email_lookup cse_depts.dat follstad@umn.edu
+Found follstad@umn.edu: IT Department --> Carl Follstad
+$ ./email_lookup cse_depts.dat sjguy@umn.edu
+Found sjguy@umn.edu: CS Department --> Stephen Guy
+$ ./email_lookup cse_depts.dat heimdahl@umn.edu
+Found heimdahl@umn.edu: CS Department --> Mats Heimdahl
+$ ./email_lookup cse_depts.dat linus@umn.edu
+Email 'linus@umn.edu' not found
+$ exit
+exit

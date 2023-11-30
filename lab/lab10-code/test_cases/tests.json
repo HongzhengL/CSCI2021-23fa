@@ -1,0 +1,27 @@
+{
+    "name": "Lab 10",
+    "tests": [
+        {
+            "name": "Quiz: QUESTIONS.txt",
+            "description": "Determines if the answers in QUESTIONS.txt are correct",
+            "command": "test_cases/resources/socrates QUESTIONS.txt -c test_cases/resources/quiz_sum.json -a",
+            "output_file": "test_cases/output/quiz.txt",
+            "points": 0.5
+        },
+        {
+            "name": "Code: email_lookup.c with Valgrind",
+            "description": "Runs the email_lookup program once and checks that it behaves as expected. Verifies memory correctness with valgrind.",
+            "command": "./email_lookup cse_depts.dat kia@umn.edu",
+            "output_file": "test_cases/output/email_lookup_mem.txt",
+            "use_valgrind": "y",
+            "points": 0.25
+        },
+        {
+            "name": "Code: email_lookup.c -- Multiple Runs",
+            "description": "Runs the email_lookup program several times in the shell to check output for correctness.",
+            "input_file": "test_cases/input/email_lookup_multi.txt",
+            "output_file": "test_cases/output/email_lookup_multi.txt",
+            "points": 0.25
+        }
+    ]
+}
