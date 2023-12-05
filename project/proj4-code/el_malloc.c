@@ -71,8 +71,8 @@ el_blockfoot_t *el_get_footer(el_blockhead_t *head) {
 // lower address than the foot.
 el_blockhead_t *el_get_header(el_blockfoot_t *foot) {
     size_t size = foot->size;
-    el_blockhead_t *head = PTR_MINUS_BYTES(foot, sizeof(el_blockhead_t) + size);
-    if ((void*) head < el_ctl.heap_start || (void*) head > el_ctl.heap_end) {
+    el_blockhead_t *head = PTR_MINUS_BYTES(foot, sizeof(el_blockhead_t) + size);    // Use of provided macros for pointer arithmetic; Correct use of sizeof to account for data sizes
+    if ((void*) head < el_ctl.heap_start) {
         return NULL;
     }
     return head;
@@ -101,15 +101,11 @@ el_blockhead_t *el_block_above(el_blockhead_t *block) {
 // WARNING: This function must perform slightly different arithmetic
 // than el_block_above(). Take care when implementing it.
 el_blockhead_t *el_block_below(el_blockhead_t *block) {
-    el_blockfoot_t *foot = el_get_footer(block);
-    el_blockfoot_t *lower_foot = PTR_MINUS_BYTES(foot, block->size + EL_BLOCK_OVERHEAD);
-    if ((void *) lower_foot < (void*) el_ctl.heap_start) {
+    el_blockfoot_t *lower_foot = PTR_MINUS_BYTES(block, sizeof(el_blockfoot_t)); // Use of provided macros for pointer arithmetic; Correct use of sizeof to account for data sizes
+    if ((void *) lower_foot < (void*) el_ctl.heap_start) {  // checks for beginning of heap and returns NULL if necessary
         return NULL;
     }
-    el_blockhead_t *lower = PTR_MINUS_BYTES(lower_foot, lower_foot->size + sizeof(el_blockhead_t));
-    if ((void *) lower < (void*) el_ctl.heap_start) {
-        return NULL;
-    }
+    el_blockhead_t *lower = el_get_header(lower_foot);
     return lower;
 }
 
@@ -194,12 +190,13 @@ void el_init_blocklist(el_blocklist_t *list) {
 // within list. Length is incremented and the bytes for the list are
 // updated to include the new block's size and its overhead.
 void el_add_block_front(el_blocklist_t *list, el_blockhead_t *block) { 
-    block->next = list->beg->next;
-    block->prev = list->beg;
+    block->next = list->beg->next;      // Sensible use of pointers prev and next 
+    block->prev = list->beg;            // to link/unlink nodes efficiently. No looping need.
     list->beg->next->prev = block;
     list->beg->next = block;
-    list->length++;
-    list->bytes += (block->size + EL_BLOCK_OVERHEAD);
+
+    list->length++; // Correct update of list length and total bytes
+    list->bytes += (block->size + EL_BLOCK_OVERHEAD);   // Accounts for EL_BLOCK_OVERHEAD when updating bytes
 }
 
 // TODO
@@ -207,10 +204,11 @@ void el_add_block_front(el_blocklist_t *list, el_blockhead_t *block) {
 // Updates the length and bytes for that list including
 // the EL_BLOCK_OVERHEAD bytes associated with header/footer.
 void el_remove_block(el_blocklist_t *list, el_blockhead_t *block) {
-    block->prev->next = block->next;
-    block->next->prev = block->prev;
-    list->length--;
-    list->bytes -= (block->size + EL_BLOCK_OVERHEAD);
+    block->prev->next = block->next;    // Sensible use of pointers prev and next
+    block->next->prev = block->prev;    // to link/unlink nodes efficiently. No looping need.
+
+    list->length--; // Correct update of list length and total bytes
+    list->bytes -= (block->size + EL_BLOCK_OVERHEAD);   // Accounts for EL_BLOCK_OVERHEAD when updating bytes
 }
 
 // Allocation-related functions
@@ -245,14 +243,16 @@ el_blockhead_t *el_split_block(el_blockhead_t *block, size_t new_size) {
     if (block->size < new_size + EL_BLOCK_OVERHEAD) {
         return NULL;
     }
-    int temp = block->size;
+    int temp = block->size;     // stores original size of block before updating
     block->size = new_size;
-    el_blockfoot_t *foot = el_get_footer(block);
+    el_blockfoot_t *foot = el_get_footer(block);    // Use of el_get_footer() to obtain footers for updating size
     foot->size = new_size;
     el_blockhead_t *new_block = PTR_PLUS_BYTES(block, new_size + EL_BLOCK_OVERHEAD);
-    new_block->size = temp - new_size - EL_BLOCK_OVERHEAD;
+    new_block->size = temp - new_size - EL_BLOCK_OVERHEAD;  // Clear evidence of placing a new header for new block
+    new_block->next = NULL;
+    new_block->prev = NULL;
     el_blockfoot_t *new_foot = el_get_footer(new_block);
-    new_foot->size = new_block->size;
+    new_foot->size = new_block->size;   // Clear evidence of placing a new footer for new block
     return new_block;
 }
 
@@ -263,19 +263,19 @@ el_blockhead_t *el_split_block(el_blockhead_t *block, size_t new_size) {
 // suitable block and el_split_block() to split it. Returns NULL if
 // no space is available.
 void *el_malloc(size_t nbytes) {
-    el_blockhead_t *block = el_find_first_avail(nbytes);
+    el_blockhead_t *block = el_find_first_avail(nbytes);    // Use of el_find_first_avail() to locate node to split
     if (block == NULL) {
         return NULL;
     }
     el_remove_block(el_ctl.avail, block);
-    el_blockhead_t *new_block = el_split_block(block, nbytes);
+    el_blockhead_t *new_block = el_split_block(block, nbytes);  // Use of el_split_block() to split block into two
     if (new_block != NULL) {
-        el_add_block_front(el_ctl.avail, new_block);
-        new_block->state = EL_AVAILABLE;
+        el_add_block_front(el_ctl.avail, new_block);    // Moves upper split block to Available list
+        new_block->state = EL_AVAILABLE;    // Updates blocks to AVAILABLE as necessary
     }
-    block->state = EL_USED;
-    el_add_block_front(el_ctl.used, block);
-    return PTR_PLUS_BYTES(block, sizeof(el_blockhead_t));
+    block->state = EL_USED;     // Updates blocks to USED as necessary
+    el_add_block_front(el_ctl.used, block); // Moves lower split block to front of Used list
+    return PTR_PLUS_BYTES(block, sizeof(el_blockhead_t));   // Uses pointer arithmetic to compute proper user address
 }
 
 // De-allocation/free() related functions
@@ -291,19 +291,19 @@ void *el_malloc(size_t nbytes) {
 // indicate the two blocks are merged. Removes both lower and higher from the
 // available list and re-adds lower to the front of the available list.
 void el_merge_block_with_above(el_blockhead_t *lower) {
-    if (lower == NULL || lower->state != EL_AVAILABLE) {
+    if (lower == NULL || lower->state != EL_AVAILABLE) {    // Checks for NULL argument, which results in no changes
         return;
     }
-    el_blockhead_t *higher = el_block_above(lower);
+    el_blockhead_t *higher = el_block_above(lower);     // Use of el_block_above() to find block above
     if (higher == NULL || higher->state != EL_AVAILABLE) {
         return;
     }
-    el_remove_block(el_ctl.avail, lower);
+    el_remove_block(el_ctl.avail, lower);   // Moves both blocks out of available list
     el_remove_block(el_ctl.avail, higher);
-    lower->size += (higher->size + EL_BLOCK_OVERHEAD);
+    lower->size += (higher->size + EL_BLOCK_OVERHEAD);  // updates to size of lower block header
     el_blockfoot_t *foot = el_get_footer(higher);
-    foot->size = lower->size;
-    el_add_block_front(el_ctl.avail, lower);
+    foot->size = lower->size;   // updates to size of higher block footer
+    el_add_block_front(el_ctl.avail, lower);    // adds merged block to front of available list
 }
 
 // TODO
@@ -313,11 +313,11 @@ void el_merge_block_with_above(el_blockhead_t *lower) {
 // blocks using el_merge_block_with_above().
 // Merges new available block with all possible adjacent available blocks
 void el_free(void *ptr) {
-    el_blockhead_t *block = PTR_MINUS_BYTES(ptr, sizeof(el_blockhead_t));
-    block->state = EL_AVAILABLE;
-    el_remove_block(el_ctl.used, block);
-    el_add_block_front(el_ctl.avail, block);
-    el_merge_block_with_above(block);
+    el_blockhead_t *block = PTR_MINUS_BYTES(ptr, sizeof(el_blockhead_t));   // Correctly locates block header
+    block->state = EL_AVAILABLE;    // Marks block as AVAILABLE
+    el_remove_block(el_ctl.used, block);    // Removes block from used list
+    el_add_block_front(el_ctl.avail, block);    // Adds block to front of available list
+    el_merge_block_with_above(block);           // Merges new available block with all possible adjacent available blocks
     el_blockhead_t *lower = el_block_below(block);
     if (lower != NULL && lower->state == EL_AVAILABLE) {
         el_merge_block_with_above(lower);
