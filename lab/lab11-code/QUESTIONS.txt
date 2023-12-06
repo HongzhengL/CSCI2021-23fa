@@ -1,0 +1,175 @@
+                           __________________
+
+                            LAB 11 QUESTIONS
+                           __________________
+
+Lab Instructions
+================
+
+  Follow the instructions below to experiment with topics related to
+  this lab.
+  - For sections marked QUIZ, fill in an (X) for the appropriate
+    response in this file. Use the command 'make test-quiz' to see if
+    all of your answers are correct.
+  - For sections marked CODE, complete the code indicated. Use the
+    command 'make test-code' to check if your code is complete.
+  - DO NOT CHANGE any parts of this file except the QUIZ sections as it
+    may interfere with the tests otherwise.
+  - If your 'QUESTIONS.txt' file seems corrupted, restore it by copying
+    over the 'QUESTIONS.txt.bak' backup file.
+  - When you complete the exercises, check your answers with 'make test'
+    and if all is well, create a zip file with 'make zip' and upload it
+    to Gradescope. Ensure that the Autograder there reflects your local
+    results.
+  - IF YOU WORK IN A GROUP only one member needs to submit and then add
+    the names of their group.
+
+INTRO: Vectorized Operations
+============================
+
+  Modern processors feature special vector instructions that are executed to
+  carry out work in parallel. Specifically, these instructions perform the
+  same operation (arithmetic, logical, bitwise, etc.) on multiple values stored
+  together in a "vector", making them an example of the "Single Instruction,
+  Multiple Data" (SIMD) paradigm. The reason these instructions are valuable
+  is because they can often complete in just one CPU cycle (ignoring
+  pipelining), just like regular instructions.  In other words, they let the
+  CPU do more work in the same amount of time as a regular instruction.
+
+  State of the art implementations of numerical algorithms (like matrix
+  multiplication) almost always use these instructions as they enable faster
+  execution than one would be able to achieve with traditional techniques, like
+  loop unrolling, alone.
+
+  Intel has defined a C API for using these instructions featuring compiler
+  "intrinsics" -- data types and functions that are very thin wrappers for
+  assembly operations. In this lab, you will explore how these intrinsics are
+  used and how they correspond to assembly code.
+
+
+QUIZ: array_add.c
+=================
+
+  Open the 'array_add.c' file. It contains two functions that compute the
+  element-wise sum of two arrays, one with a traditional for loop and addition
+  and the other with SIMD intrinsics.
+
+
+  Based on its usage in 'array_add_vec', what do you think the data type
+  '__m256i' represents?
+
+   - ( ) A vector of 256 integer values
+   - ( ) A vector of integers with size 256 bits
+   - ( ) A matrix of 256 integer values
+   - ( ) A matrix of integers with size 256 bits
+
+   Which of the following intrinsics is used to copy integers from memory into a
+   vector instance?
+
+   - ( ) _mm256_load_si256
+   - ( ) _mm256_store_si256
+   - ( ) _mm256_add_epi32
+   - ( ) _mm256_mullo_epi32
+
+
+   Which of the following intrinsics is used to copy integers from a vector
+   instance to a memory address?
+
+   - ( ) _mm256_load_si256
+   - ( ) _mm256_store_si256
+   - ( ) _mm256_add_epi32
+   - ( ) _mm256_mullo_epi32
+
+
+   Which of the following intrinsics is used to compute the element-wise sum
+   of two vectors containing 32-bit integer values?
+
+   - ( ) _mm256_add_epi16
+   - ( ) _mm256_mullo_epi16
+   - ( ) _mm256_add_epi32
+   - ( ) _mm256_mullo_epi32
+
+
+  What does the "vectorized" version of adding two arrays have in common with a
+  loop-unrolled version?
+
+  - ( ) Both will perform better if we use multiple accumulators.
+  - ( ) Both can only work on fixed-size chunks of data, so we need a cleanup
+        loop at the end.
+  - ( ) Both will have diminishing returns as chunk size increases beyond a
+        certain point.
+  - ( ) Trick Question: These two optimizations have nothing in common.
+
+
+  How does the speed of the vectorized version of array addition compare to the
+  traditional version?
+
+  - ( ) The vectorized version is slower than the traditional version.
+  - ( ) The vectorized version is about the same speed as the traditional
+        version.
+  - ( ) The vectorized version is faster than the traditional version.
+  - ( ) The relative speed of the two implementations is not consistent between
+        different executions.
+
+  Take a moment to study the assembly generated from 'array_add.c'. You can
+  generate such assembly with the following command:
+
+  > gcc -mavx2 -S array_add.c
+
+  then look at the contents of 'array_add.s', particularly the instructions
+  under the 'array_add_vec' label. What do you notice?
+
+  - ( ) There are special vector-specific instructions starting with 'v', like
+        'vmovdqa' and 'vpadd'.
+  - ( ) There are special vector-specific CPU registers like '%ymm0'.
+  - ( ) Some vector instructions use more than 2 operands, unlike the typical
+        assembly instructions we have studied previously.
+  - ( ) All of the above.
+
+
+CODE: Complete 'array_dot.c'
+============================
+
+  Complete the code in the 'array_dot.c' file. This is similar to the code in
+  the 'array_add.c' file, except that we now have functions for traditional and
+  vectorized versions of a dot product rather than an element-wise sum.
+
+  Specifically, complete the implementation of the function 'array_dot_vec'.
+  We've already implemented code to initialize arrays for testing and time the
+  speed of the two functions for you.
+
+  A few important hints:
+
+    1. Use the intrinsic '_mm256_mullo_epi32' to perform element-wise
+       multiplication of vectors containing 32-bit integers.
+    2. You'll want to make a temporary array to hold the results of these
+       element-wise products, as is done in the provided 'array_dot' function.
+    3. It's OK to compute your final sum, after all multiplication has been
+       performed, with a plain old 'for' loop, like in the 'array_dot' function.
+
+A Few Last Notes
+================
+
+  Congratulations! You've just completed the last lab assignment for CSCI 2021.
+  A few notes on this lab's code and where to go from here if you want to
+  explore vectorization in more detail.
+
+  You probably noticed that we use the function 'alloc_aligned_int_array()',
+  which itself calls 'posix_memalign()', in place of 'malloc()'.  This has to
+  do with memory alignment. The vector load and store operations work best if
+  they are working with memory addresses properly aligned to a vector's size.
+  There are versions of load and store that often (but not always) run much
+  slower if they can't assume this alignment (e.g., '_mm256_loadu_si256' rather
+  than '_mm256_load_si256').
+
+  In previous semesters, students have optimized a matrix multiplication
+  function in Project 4. This operation is fundamental to many applications in
+  linear algebra, machine learning, and data analysis in general. Using the
+  techniques we learned in class (like loop unrolling) combined with
+  vectorization can lead to impressive speedup ratios over 40.
+
+  The latest and greatest vector instructions use 512-bit vectors and are
+  defined in the AVX-512 standard. These instructions are not yet supported on
+  all modern CPUs (ironically, AMD's latest CPUs support them while Intel's do
+  not) and have been the subject of some controversy. Intel recently announced
+  a new "AVX10" standard in an attempt to address this.

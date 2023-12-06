@@ -1,0 +1,20 @@
+{
+    "name": "Lab 11",
+    "tests": [
+        {
+            "name": "Quiz: QUESTIONS.txt",
+            "description": "Determines if the answers in QUESTIONS.txt are correct",
+            "command": "test_cases/resources/socrates QUESTIONS.txt -c test_cases/resources/quiz_sum.json -a",
+            "output_file": "test_cases/output/quiz.txt",
+            "points": 0.5
+        },
+        {
+            "name": "Code: array_dot Correctness",
+            "description": "Runs the array_dot program, verifying that the array_dot_vec function produces the same results as the array_dot function. Timing results are elided by the sed program and ignored.",
+            "input_file": "test_cases/input/array_dot.txt",
+            "output_file": "test_cases/output/array_dot.txt",
+            "points": 0.5,
+            "timeout": 20
+        }
+    ]
+}

@@ -1,0 +1,7 @@
+$ ./array_dot | sed 's/[0-9]\+\.[0-9]\+/x/'
+Setting up arrays...
+Starting array dot product...
+array_dot: x sec.
+array_dot_vec: x sec.
+$ exit
+exit
