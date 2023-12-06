@@ -44,7 +44,24 @@ int array_dot(const int *a, const int *b, int len) {
 // Uses vector instructions to perform work in parallel
 int array_dot_vec(const int *a, const int *b, int len) {
     // TODO Implement a vectorized dot product function
-    return 2;
+    int *temp = alloc_aligned_int_array(len);
+    int i = 0;
+    for (; i <= len - 8; i+=8) {
+        __m256i a_vec = _mm256_load_si256((__m256i *) (a + i));
+        __m256i b_vec = _mm256_load_si256((__m256i *) (b + i));
+
+        __m256i c_vec = _mm256_mullo_epi32(a_vec, b_vec);
+        _mm256_store_si256((__m256i *) (temp + i), c_vec);
+    }
+    for (; i < len; i++) {
+        temp[i] = a[i] * b[i];
+    }
+    int sum = 0;
+    for (i = 0; i < len; i++) {
+        sum += temp[i];
+    }
+    free(temp);
+    return sum;
 }
 
 void fill_array(int *v, int len) {

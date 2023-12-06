@@ -59,14 +59,14 @@ QUIZ: array_add.c
   '__m256i' represents?
 
    - ( ) A vector of 256 integer values
-   - ( ) A vector of integers with size 256 bits
+   - (X) A vector of integers with size 256 bits
    - ( ) A matrix of 256 integer values
    - ( ) A matrix of integers with size 256 bits
 
    Which of the following intrinsics is used to copy integers from memory into a
    vector instance?
 
-   - ( ) _mm256_load_si256
+   - (X) _mm256_load_si256
    - ( ) _mm256_store_si256
    - ( ) _mm256_add_epi32
    - ( ) _mm256_mullo_epi32
@@ -76,7 +76,7 @@ QUIZ: array_add.c
    instance to a memory address?
 
    - ( ) _mm256_load_si256
-   - ( ) _mm256_store_si256
+   - (X) _mm256_store_si256
    - ( ) _mm256_add_epi32
    - ( ) _mm256_mullo_epi32
 
@@ -86,7 +86,7 @@ QUIZ: array_add.c
 
    - ( ) _mm256_add_epi16
    - ( ) _mm256_mullo_epi16
-   - ( ) _mm256_add_epi32
+   - (X) _mm256_add_epi32
    - ( ) _mm256_mullo_epi32
 
 
@@ -94,7 +94,7 @@ QUIZ: array_add.c
   loop-unrolled version?
 
   - ( ) Both will perform better if we use multiple accumulators.
-  - ( ) Both can only work on fixed-size chunks of data, so we need a cleanup
+  - (X) Both can only work on fixed-size chunks of data, so we need a cleanup
         loop at the end.
   - ( ) Both will have diminishing returns as chunk size increases beyond a
         certain point.
@@ -107,7 +107,7 @@ QUIZ: array_add.c
   - ( ) The vectorized version is slower than the traditional version.
   - ( ) The vectorized version is about the same speed as the traditional
         version.
-  - ( ) The vectorized version is faster than the traditional version.
+  - (X) The vectorized version is faster than the traditional version.
   - ( ) The relative speed of the two implementations is not consistent between
         different executions.
 
@@ -124,7 +124,7 @@ QUIZ: array_add.c
   - ( ) There are special vector-specific CPU registers like '%ymm0'.
   - ( ) Some vector instructions use more than 2 operands, unlike the typical
         assembly instructions we have studied previously.
-  - ( ) All of the above.
+  - (X) All of the above.
 
 
 CODE: Complete 'array_dot.c'
