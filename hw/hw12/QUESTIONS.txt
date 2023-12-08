@@ -1,0 +1,215 @@
+                           __________________
+
+                            HW 12 QUESTIONS
+                           __________________
+
+PROBLEM 1: Basic Library Linking
+================================
+
+(A)
+~~~
+
+  The file `do_math.c' contains some basic usage of the C library math
+  functions like `pow()'.  Compile this program using the command line
+  ,----
+  | > gcc do_math.c
+  `----
+  and show the results below (there should be an error). Describe why
+  the linker complains about functions like `cos' and `pow'.
+
+  *Note*: problems will arise on Linux systems with gcc; compilation with
+  other compilers and/or on other operating systems may not suffer from the
+  same problems.
+
+
+(B)
+~~~
+
+  In order to fix this problem, one must link the program against the
+  math library typically called `libm'. This can be done with the option
+  `-l' for "library" and `m' for the math library as shown:
+  ,----
+  | > gcc do_math.c -lm
+  `----
+
+  Show a run of the resulting executable after a successful compile
+  below.
+
+
+(C)
+~~~
+
+  After successfully compiling `do_math.c', use the `ldd' command to examine
+  which dynamically linked libraries it requires to run. Assuming the
+  executable is named `a.out', invoke the command like this
+  ,----
+  | > ldd a.out
+  `----
+  Show the output for this command and note anything related to the math
+  library that is reported.
+
+
+(D)
+~~~
+
+  Run the program which should report its Process ID (pid) before
+  pausing.  In a separate terminal, while the program is still running,
+  execute the pmap command to see the virtual address space for the
+  program (command `pmap <pid>'). Paste the results below and describe
+  any relation to the math library that is apparent.
+
+
+PROBLEM 2: Linking Static Libraries
+===================================
+
+(A)
+~~~
+
+  Libraries come in two flavors. The default type is Dynamically Linked
+  Shared Libraries that were demonstrated above.  An older but easier to
+  understand type are Statically Linked libraries.
+
+  A few useful search functions, like `binary_array_search()',
+  have been formed into a Statically Linked Library in the directory
+  `ds_search_static/'.
+
+  Change into this directory and perform a
+  ,----
+  | > make
+  `----
+  to build the library.
+
+  Describe the commands you see issued for it and what command creates
+  the final library file. Note what file extension (`lib.something') the
+  static library has in your answer.
+
+
+(B)
+~~~
+
+  Change back to the main homework directory where you will find a file
+  called `do_search.c' which uses search functions from the
+  library. Attempting to compile this program on its own leads to
+  several errors.  The first is simple:
+  ,----
+  | > gcc do_search.c
+  | do_search.c:6:10: fatal error: ds_search.h: No such file or directory
+  |  #include "ds_search.h"
+  |           ^~~~~~~~~~~~~
+  | compilation terminated.
+  `----
+  Unable to find a header file to include, the compiler terminates.
+
+  Fix this by telling the compiler where the `ds_search.h' file is in the
+  library directory:
+
+  ,----
+  | > gcc do_search.c -I ds_search_static
+  | ...
+  `----
+
+  The `-I' option allows additional directories to be searched for files
+  referenced in `#include' directives. However, this is not the only problem.
+
+  Show the linker errors that result from the compiling this way and
+  describe why they appear.
+
+
+(C)
+~~~
+
+  The compiler can be informed of additional places to look for library
+  code beyond standard system locations with the `-L' option. In this
+  case, the library `ds_search_static' contains the library. Finally,
+  one must specify an additional library to link against,
+  `libds_search.a' in this case (though invocation drops the `lib' and
+  `.a' parts). Run the following command:
+
+  ,----
+  | > gcc do_search.c  -I ds_search_static  -L ds_search_static  -lds_search
+  | #                  ^^ includes dir ^^^  ^^ libray dir ^^^^^  ^^lib name^
+  `----
+
+  and then run the resulting executable to show its output.
+
+
+(D)
+~~~
+
+  Run the `nm' command to show the symbol names present in the resulting
+  executable.  Verify that the text definitions for library functions
+  required by `do_search.c' are present and well-defined.  Show your
+  output for `nm'
+
+  Are ALL functions from libds_search.a copied in or only those that are
+  needed?
+
+
+Problem 3: Creating Dynamically Linked Shared Libraries
+=======================================================
+
+(A)
+~~~
+
+  Dynamically Linked Shared Libraries differ from their static counterparts in
+  that no definitions are copied into an executable. Instead, when creating
+  programs using such libraries, definitions for the functions in the
+  dynamically linked libraries are left undefined and marked as "link at
+  runtime." On loading the program, the location of library code is mapped into
+  the virtual address space of the program. Since multiple programs can map the
+  same physical address into their virtual address space, only one copy of
+  functions such as `printf()' needs to be in memory for the whole system.
+
+  The provided code directory `ds_search_dynamic/' contains a `Makefile'
+  which will build a shared object (.so) version of a data structure
+  search library as follows.
+  ,----
+  | > cd ds_search_dynamic/
+  |
+  | > make
+  | gcc -g -Wall -Werror -fpic -c tree.c
+  | gcc -g -Wall -Werror -fpic -c array.c
+  | gcc -g -Wall -Werror -fpic -c list.c
+  | gcc -shared -o libds_search.so tree.o array.o list.o
+  |
+  | > file libds_search.so
+  | libds_search.so: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, ...
+  |
+  | > cd ..
+  `----
+
+  Compile and link the provided `do_search.c' program against this
+  library as follows.
+
+  ,----
+  | > gcc do_search.c -lds_search -I ds_search_dynamic -L ds_search_dynamic
+  `----
+
+  Run the `ldd' utility to see what dynamic library dependencies the
+  resulting `a.out' program has and attempt to run it as shown.
+  ,----
+  | > ldd a.out
+  | ...
+  |
+  | > ./a.out
+  | ...
+  `----
+
+  Show the output for these commands.
+
+
+(B)
+~~~
+
+  What problems did you encounter when running the program?
+
+  Next, try running the program as follows:
+  ,----
+  | > LD_LIBRARY_PATH=ds_search_dynamic ./a.out
+  `----
+
+  What do you observe?
+
+  LD_LIBRARY_PATH is an "environment variable" -- basically a setting for
+  your current "session" with the OS -- that tells the linker where (in which
+  directories) to search for dynamically-linked library dependencies.
